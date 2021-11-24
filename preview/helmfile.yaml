@@ -1,0 +1,59 @@
+environments:
+  default:
+    values:
+    - jx-values.yaml
+repositories:
+- name: jx3
+  url: https://jenkins-x-charts.github.io/repo
+- name: cne
+  url: https://cloudnativeentrepreneur.github.io/helm-charts/
+releases:
+- chart: jx3/jx-verify
+  name: jx-verify
+  namespace: '{{ requiredEnv "PREVIEW_NAMESPACE" }}'
+  values:
+  - values.verify.yaml
+- chart: cne/example-readmodel
+  name: example-readmodel
+  version: 0.0.1
+  wait: true
+  namespace: '{{ requiredEnv "PREVIEW_NAMESPACE" }}'
+  values:
+  - jx-values.yaml
+- chart: cne/sourced-psql-event-store
+  name: sourced-psql-event-store
+  version: 0.0.1
+  wait: true
+  namespace: '{{ requiredEnv "PREVIEW_NAMESPACE" }}'
+  values:
+  - jx-values.yaml
+- chart: '../charts/{{ requiredEnv "APP_NAME" }}'
+  name: preview
+  wait: true
+  createNamespace: true
+  namespace: '{{ requiredEnv "PREVIEW_NAMESPACE" }}'
+  values:
+  - jx-values.yaml
+  - values.preview.yaml
+  - values.yaml.gotmpl
+  hooks:
+  - events: ["presync"]
+    showlogs: true
+    command: "jx"
+    args:
+    - secret
+    - copy
+    - --create-namespace
+    - --selector
+    - "secret.jenkins-x.io/replica-source=true"
+    - --to
+    - '{{ requiredEnv "PREVIEW_NAMESPACE" }}'
+  - events: ["presync"]
+    showlogs: true
+    command: "kubectl"
+    args:
+    - label
+    - namespace
+    - '{{ requiredEnv "PREVIEW_NAMESPACE" }}'
+    - istio-injection=enabled
+    - --overwrite=true

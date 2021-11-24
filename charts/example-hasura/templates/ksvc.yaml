@@ -1,0 +1,60 @@
+{{- if .Values.knativeDeploy }}
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  annotations:
+{{- if .Values.knative.subdomain }}
+    custom-hostname: {{ .Values.knative.subdomain }}
+{{- end }}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: {{ .Values.knative.minScale | quote }}
+        autoscaling.knative.dev/maxScale: {{ .Values.knative.maxScale | quote }}
+    spec:
+      containers:
+      - image: hasura/graphql-engine:v2.0.9
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+        env:
+        - name: READMODEL_POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.readmodel.psql.username }}.{{ .Values.readmodel.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: READMODEL_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.readmodel.psql.username }}.{{ .Values.readmodel.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: READMODEL_POSTGRES_DATABASE
+          value: {{ .Values.readmodel.psql.database }}
+        - name: READMODEL_POSTGRES_HOST
+          value: {{ .Values.readmodel.psql.hostname.write }}.{{ .Release.Namespace }}.svc.cluster.local
+        - name: READMODEL_POSTGRES_PORT
+          value: "5432"
+        - name: HASURA_GRAPHQL_DATABASE_URL
+          value: postgres://$(READMODEL_POSTGRES_USERNAME):$(READMODEL_POSTGRES_PASSWORD)@$(READMODEL_POSTGRES_HOST):$(READMODEL_POSTGRES_PORT)/$(READMODEL_POSTGRES_DATABASE)
+        ## enable the console served by server - need to run `hasura console` to access instead
+        - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+          value: "false"
+        ## enable debugging mode. It is recommended to disable this in production
+        - name: HASURA_GRAPHQL_DEV_MODE
+          value: {{ .Values.hasura.devMode | quote }}
+{{- range $pkey, $pval := .Values.env }}
+        - name: {{ $pkey }}
+          value: {{ quote $pval }}
+{{- end }}
+        # livenessProbe:
+        #   httpGet:
+        #     path: {{ .Values.livenessProbe.probePath | default .Values.probePath }}
+        # readinessProbe:
+        #   httpGet:
+        #     path: {{ .Values.livenessProbe.probePath | default .Values.probePath }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+{{- end }}

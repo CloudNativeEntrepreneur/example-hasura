@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.service.name }}-cli
+rules:
+- apiGroups:
+  - ""
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  - replicasets
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - serving.knative.dev
+  resources:
+  - services
+  - revisions
+  verbs:
+  - get
+  - list
+  - watch

@@ -1,0 +1,30 @@
+{{- if .Values.runMigrations }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.service.name }}-migrations-{{ lower .Values.image.tag | replace "_" "-" }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: {{ .Values.service.name }}-cli
+      initContainers:
+      - name: wait-for-resources
+        image: bitnami/kubectl:1.21
+        command: [
+          'sh',
+          '-c',
+          "kubectl wait --for=condition=ready pod --selector=cluster-name=example-readmodel-postgresql --timeout=600s; REVISION=`kubectl get revisions | grep example-hasura-0 | tail -1 | awk '$1 {print$1}-deployment'`; kubectl rollout status -n {{ .Release.Namespace }} deployment $REVISION-deployment"
+        ]
+      containers:
+      - name: migrations
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        env:
+        - name: HASURA_GRAPHQL_ENDPOINT
+          value: http://example-hasura.{{ .Release.Namespace }}.svc.cluster.local
+      restartPolicy: Never
+{{- end }}

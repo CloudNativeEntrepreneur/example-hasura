@@ -1,0 +1,56 @@
+# Default values for node projects.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+image:
+  repository: draft
+  tag: dev
+  pullPolicy: IfNotPresent
+
+# define environment variables here as a map of key: value
+env:
+
+knativeDeploy: true
+knative:
+  minScale: 1
+  maxScale: 3
+
+runMigrations: true
+runSeeds: false
+
+service:
+  name: example-hasura
+  type: ClusterIP
+  internalPort: 8080
+  externalPort: 80
+
+probePath: /healthz
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 1
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
+resources:
+  limits:
+    cpu: '1'
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi
+
+hasura:
+  devMode: false
+
+readmodel:
+  psql:
+    name: example-readmodel-postgresql
+    database: readmodel
+    username: readmodel
+    hostname: 
+      write: example-readmodel-postgresql
+      read: example-readmodel-postgresql-repl
