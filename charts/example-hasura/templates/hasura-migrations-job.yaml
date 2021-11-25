@@ -26,5 +26,7 @@ spec:
         env:
         - name: HASURA_GRAPHQL_ENDPOINT
           value: http://example-hasura.{{ .Release.Namespace }}.svc.cluster.local
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          value: af18a72fc1eb42a78aa8c6d679b4842a
       restartPolicy: Never
 {{- end }}
