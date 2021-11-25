@@ -1,3 +1,22 @@
 table:
   name: messages
   schema: public
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - message
+    - sentAt
+    set:
+      publicAddress: x-hasura-user-id
+  role: user
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - message
+    - publicAddress
+    - sentAt
+    filter: {}
+  role: user

@@ -45,6 +45,12 @@ spec:
         ## enable debugging mode. It is recommended to disable this in production
         - name: HASURA_GRAPHQL_DEV_MODE
           value: {{ .Values.hasura.devMode | quote }}
+        - name: HASURA_GRAPHQL_CORS_DOMAIN
+          value: '*'
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          value: af18a72fc1eb42a78aa8c6d679b4842a
+        - name: HASURA_GRAPHQL_JWT_SECRET
+          value: '{"type":"HS256", "key": "a114d68b22894049a7c2203a7228fdcde922a1210675427795b7bf9a0317e16d"}'
 {{- range $pkey, $pval := .Values.env }}
         - name: {{ $pkey }}
           value: {{ quote $pval }}
