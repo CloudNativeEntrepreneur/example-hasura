@@ -4,7 +4,18 @@ NOW := $(shell date +%m_%d_%Y_%H_%M)
 SERVICE_NAME := example-hasura
 HASURA_GRAPHQL_DATABASE_URL=postgres://readmodel:$(kubectl get secret readmodel.example-readmodel-postgresql.credentials.postgresql.acid.zalan.do)@readmodel.default.cluster.svc.local:5432/readmodel
 
-onboard: refresh-kind-image
+# Does what's described in Readme, runs in the background - `attach-to-tmux-session` to attach to the session where it is running
+dev:
+	tmux new-session -d -s web3auth-example
+	tmux send-keys -t web3auth-example 'tmux new-window -n psql-port-forward ' ENTER
+	tmux send-keys -t web3auth-example 'tmux new-window -n hasura ' ENTER
+	tmux send-keys -t web3auth-example "tmux send-keys -t psql-port-forward 'kubectl port-forward example-readmodel-postgresql-0 5433:5432' ENTER" ENTER
+	tmux send-keys -t web3auth-example "tmux send-keys -t hasura 'make up' ENTER" ENTER
+
+attach-to-tmux-session:
+	tmux attach -t web3auth-example
+
+onboard: dev
 
 migrate:
 	hasura metadata apply --endpoint $(HASURA_ENDPOINT)
