@@ -6,6 +6,7 @@ HASURA_GRAPHQL_DATABASE_URL=postgres://readmodel:$(kubectl get secret readmodel.
 
 # Does what's described in Readme, runs in the background - `attach-to-tmux-session` to attach to the session where it is running
 dev:
+	kubectl ctx $(LOCAL_DEV_CLUSTER)
 	tmux new-session -d -s web3auth-example
 	tmux send-keys -t web3auth-example 'tmux new-window -n psql-port-forward ' ENTER
 	tmux send-keys -t web3auth-example 'tmux new-window -n hasura ' ENTER
