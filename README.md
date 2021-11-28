@@ -57,3 +57,12 @@ Run `make up` to start Hasura via docker-compose configured to connect to the po
 
 It's worth noting that you could port-forward any psql db running in any kubernetes cluster. It does not have to be the local-dev-cluster, or the example-readmodel db, however, development being simple is important, and hence I've preconfigured this solution for development purposes.
 
+# FAQ
+
+## YOUR SECRET IS EXPOSED
+
+Yes, I know.
+
+It'll only work in the local development cluster - this is part of an example that contains several moving parts, so I just generated some random secrets where they were needed and preconfigured things accordingly so you can just run it locally and everything will work.
+
+Don't use these proconfigured values in production. I typically use ExternalSecrets in prod.
