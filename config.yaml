@@ -1,5 +1,5 @@
 version: 3
-endpoint: http://example-hasura.default.127.0.0.1.sslip.io
+endpoint: http://localhost:8080
 metadata_directory: metadata
 actions:
   kind: synchronous

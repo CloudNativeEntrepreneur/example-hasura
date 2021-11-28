@@ -2,6 +2,7 @@ HASURA_ENDPOINT?=http://example-hasura.default.127.0.0.1.sslip.io
 LOCAL_DEV_CLUSTER ?= kind-local-dev-cluster
 NOW := $(shell date +%m_%d_%Y_%H_%M)
 SERVICE_NAME := example-hasura
+HASURA_GRAPHQL_DATABASE_URL=postgres://readmodel:$(kubectl get secret readmodel.example-readmodel-postgresql.credentials.postgresql.acid.zalan.do)@readmodel.default.cluster.svc.local:5432/readmodel
 
 onboard: refresh-kind-image
 
@@ -42,3 +43,9 @@ localizer:
 
 stop-localizer:
 	localizer expose default/$(SERVICE_NAME) --stop
+
+up:
+	./scripts/run-using-local-dev-cluster-db.sh
+
+down:
+	docker-compose down --remove-orphans
