@@ -9,14 +9,14 @@ insert_permissions:
     - message
     - sentAt
     set:
-      publicAddress: x-hasura-user-id
+      address: x-hasura-user-id
   role: user
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
     - message
-    - publicAddress
+    - address
     - sentAt
     filter: {}
   role: user
