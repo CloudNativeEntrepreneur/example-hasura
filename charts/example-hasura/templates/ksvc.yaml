@@ -17,10 +17,28 @@ spec:
         autoscaling.knative.dev/maxScale: {{ .Values.knative.maxScale | quote }}
     spec:
       containers:
-      - image: hasura/graphql-engine:v2.0.9
+      - image: hasura/graphql-engine:v2.0.10
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         env:
+        - name: METADATA_POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.hasura.psql.username }}.{{ .Values.hasura.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: METADATA_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.hasura.psql.username }}.{{ .Values.hasura.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: METADATA_POSTGRES_DATABASE
+          value: {{ .Values.hasura.psql.database }}
+        - name: METADATA_POSTGRES_HOST
+          value: {{ .Values.hasura.psql.name }}.{{ .Release.Namespace }}.svc.cluster.local
+        - name: METADATA_POSTGRES_PORT
+          value: "5432"
+        - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
+          value: postgres://$(METADATA_POSTGRES_USERNAME):$(METADATA_POSTGRES_PASSWORD)@$(METADATA_POSTGRES_HOST):$(METADATA_POSTGRES_PORT)/$(METADATA_POSTGRES_DATABASE)
         - name: READMODEL_POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:

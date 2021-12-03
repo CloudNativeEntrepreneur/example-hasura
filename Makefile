@@ -5,18 +5,7 @@ SERVICE_NAME := example-hasura
 HASURA_GRAPHQL_DATABASE_URL=postgres://readmodel:$(kubectl get secret readmodel.example-readmodel-postgresql.credentials.postgresql.acid.zalan.do)@readmodel.default.cluster.svc.local:5432/readmodel
 
 # Does what's described in Readme, runs in the background - `attach-to-tmux-session` to attach to the session where it is running
-dev:
-	kubectl ctx $(LOCAL_DEV_CLUSTER)
-	tmux new-session -d -s web3auth-example
-	tmux send-keys -t web3auth-example 'tmux new-window -n psql-port-forward ' ENTER
-	tmux send-keys -t web3auth-example 'tmux new-window -n hasura ' ENTER
-	tmux send-keys -t web3auth-example "tmux send-keys -t psql-port-forward 'kubectl port-forward example-readmodel-postgresql-0 5433:5432' ENTER" ENTER
-	tmux send-keys -t web3auth-example "tmux send-keys -t hasura 'make up' ENTER" ENTER
-
-attach-to-tmux-session:
-	tmux attach -t web3auth-example
-
-onboard: dev
+onboard: refresh-kind-image
 
 migrate:
 	hasura metadata apply --endpoint $(HASURA_ENDPOINT)
@@ -49,15 +38,3 @@ delete-local-deployment:
 
 refresh-kind-image: build-new-local-image load-local-image-to-kind deploy-to-local-cluster
 hard-refresh-kind-image: delete-local-deployment build-new-local-image load-local-image-to-kind deploy-to-local-cluster
-
-localizer:
-	localizer expose default/$(SERVICE_NAME) --map 80:3000
-
-stop-localizer:
-	localizer expose default/$(SERVICE_NAME) --stop
-
-up:
-	./scripts/run-using-local-dev-cluster-db.sh
-
-down:
-	docker-compose down --remove-orphans

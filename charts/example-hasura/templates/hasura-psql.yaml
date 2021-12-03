@@ -1,0 +1,46 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: hasura-metadata-postgresql
+spec:
+  teamId: hasura
+
+  podAnnotations:
+    sidecar.istio.io/inject: {{ .Values.hasura.psql.istio.injection | quote }}
+
+  numberOfInstances: {{ .Values.hasura.psql.numberOfInstances }}
+
+  users:
+    admin:  # database owner
+    - superuser
+    - createdb
+    metadata: []
+
+  # format:
+  # `${databasename}: ${owner}` (matches user ^)
+  databases:
+    metadata: metadata
+
+  enableShmVolume: {{ .Values.hasura.psql.enableShmVolume }}
+
+  enableLogicalBackup: {{ .Values.hasura.psql.enableLogicalBackup }}
+
+  enableConnectionPooler: {{ .Values.hasura.psql.enableConnectionPooler }}
+  enableReplicaConnectionPooler: {{ .Values.hasura.psql.enableReplicaConnectionPooler }}
+
+{{- if .Values.enableConnectionPooler }}
+  connectionPooler:
+    maxDBConnections: {{ .Values.hasura.psql.connectionPooler.maxDBConnections }}
+    numberOfInstances: {{ .Values.hasura.psql.connectionPooler.numberOfInstances }}
+{{- end }}
+
+  postgresql:
+    version: "13"
+    parameters:
+{{ toYaml .Values.hasura.psql.parameters | indent 6 }}
+
+  resources:
+{{ toYaml .Values.hasura.psql.resources | indent 4 }}
+
+  volume:
+    size: {{ .Values.hasura.psql.volume.size }}
