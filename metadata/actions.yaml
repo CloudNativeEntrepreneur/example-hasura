@@ -1,6 +1,14 @@
-actions: []
+actions:
+- name: command_todo_initialize
+  definition:
+    kind: synchronous
+    handler: http://host.docker.internal:5002/todo.initialize
+  permissions:
+  - role: user
 custom_types:
   enums: []
-  input_objects: []
-  objects: []
+  input_objects:
+  - name: CommandTodoInitializeInput
+  objects:
+  - name: CommandTodoInitializeOutput
   scalars: []
