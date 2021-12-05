@@ -14,5 +14,6 @@ type CommandTodoInitializeOutput {
   todo: String!
   completed: Boolean!
   createdAt: date!
+  completedAt: date
 }
 
