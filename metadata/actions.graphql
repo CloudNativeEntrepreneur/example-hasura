@@ -1,11 +1,13 @@
 type Mutation {
-  command_todo_initialize(
-    todo: CommandTodoInitializeInput!
-  ): CommandTodoInitializeOutput
+  command_todo_complete(
+    id: String!
+  ): CommandTodoCompleteOutput
 }
 
-input CommandTodoInitializeInput {
-  todo: String!
+type Mutation {
+  command_todo_initialize(
+    todo: String!
+  ): CommandTodoInitializeOutput
 }
 
 type CommandTodoInitializeOutput {
@@ -15,5 +17,14 @@ type CommandTodoInitializeOutput {
   completed: Boolean!
   createdAt: date!
   completedAt: date
+}
+
+type CommandTodoCompleteOutput {
+  id: String!
+  address: String!
+  todo: String!
+  completed: Boolean!
+  createdAt: date!
+  completedAt: date!
 }
 

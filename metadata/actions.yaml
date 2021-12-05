@@ -1,4 +1,10 @@
 actions:
+- name: command_todo_complete
+  definition:
+    kind: synchronous
+    handler: http://host.docker.internal:5002/todo.complete
+  permissions:
+  - role: user
 - name: command_todo_initialize
   definition:
     kind: synchronous
@@ -11,4 +17,5 @@ custom_types:
   - name: CommandTodoInitializeInput
   objects:
   - name: CommandTodoInitializeOutput
+  - name: CommandTodoCompleteOutput
   scalars: []
