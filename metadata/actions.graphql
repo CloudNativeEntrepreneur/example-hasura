@@ -11,6 +11,12 @@ type Mutation {
 }
 
 type Mutation {
+  command_todo_remove(
+    id: String!
+  ): CommandTodoRemoveOutput
+}
+
+type Mutation {
   command_todo_reopen(
     id: String!
   ): CommandTodoReopenOutput
@@ -45,5 +51,9 @@ type CommandTodoReopenOutput {
   completed: Boolean!
   createdAt: date!
   completedAt: date
+}
+
+type CommandTodoRemoveOutput {
+  id: String!
 }
 

@@ -11,6 +11,12 @@ actions:
     handler: http://host.docker.internal:5002/todo.initialize
   permissions:
   - role: user
+- name: command_todo_remove
+  definition:
+    kind: synchronous
+    handler: http://host.docker.internal:5002/todo.remove
+  permissions:
+  - role: user
 - name: command_todo_reopen
   definition:
     kind: synchronous
@@ -25,4 +31,5 @@ custom_types:
   - name: CommandTodoInitializeOutput
   - name: CommandTodoCompleteOutput
   - name: CommandTodoReopenOutput
+  - name: CommandTodoRemoveOutput
   scalars: []
