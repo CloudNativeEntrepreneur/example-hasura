@@ -10,6 +10,16 @@ type Mutation {
   ): CommandTodoInitializeOutput
 }
 
+type Mutation {
+  command_todo_reopen(
+    id: String!
+  ): CommandTodoReopenOutput
+}
+
+input CommandTodoInitializeInput {
+  todo: String!
+}
+
 type CommandTodoInitializeOutput {
   id: String!
   address: String!
@@ -26,5 +36,14 @@ type CommandTodoCompleteOutput {
   completed: Boolean!
   createdAt: date!
   completedAt: date!
+}
+
+type CommandTodoReopenOutput {
+  id: String!
+  address: String!
+  todo: String!
+  completed: Boolean!
+  createdAt: date!
+  completedAt: date
 }
 
