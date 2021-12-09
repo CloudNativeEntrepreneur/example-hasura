@@ -1,9 +1,9 @@
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: hasura-metadata-postgresql
+  name: example-hasura-metadata-postgresql
 spec:
-  teamId: hasura
+  teamId: example
 
   podAnnotations:
     sidecar.istio.io/inject: {{ .Values.hasura.psql.istio.injection | quote }}

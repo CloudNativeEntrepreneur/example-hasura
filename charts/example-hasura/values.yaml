@@ -46,7 +46,7 @@ resources:
 hasura:
   devMode: true
   psql:
-    name: hasura-metadata-postgresql
+    name: example-hasura-metadata-postgresql
     database: metadata
     username: metadata
     numberOfInstances: 1
