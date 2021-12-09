@@ -5,7 +5,10 @@ SERVICE_NAME := example-hasura
 HASURA_GRAPHQL_DATABASE_URL=postgres://readmodel:$(kubectl get secret readmodel.example-readmodel-postgresql.credentials.postgresql.acid.zalan.do)@readmodel.default.cluster.svc.local:5432/readmodel
 
 # Does what's described in Readme, runs in the background - `attach-to-tmux-session` to attach to the session where it is running
-onboard: refresh-kind-image
+onboard: refresh-kind-image open
+
+open:
+	code .
 
 migrate:
 	hasura metadata apply --endpoint $(HASURA_ENDPOINT)
