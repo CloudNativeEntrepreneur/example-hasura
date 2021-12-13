@@ -2,6 +2,11 @@
 
 Auth Example's Hasura instance, configs, migrations, and job to run migrations.
 
+This particular example relies on SchemaHero to manage the "readmodel" database. However, if you'd like to use Hasura to manage this DB's migrations, simply uncomment the following lines:
+
+https://github.com/CloudNativeEntrepreneur/example-hasura/blob/master/Dockerfile#L7
+https://github.com/CloudNativeEntrepreneur/example-hasura/blob/master/apply-migrations.sh#L6
+
 ## Environment Variabls
 
 ### `HASURA_GRAPHQL_ENDPOINT`
