@@ -30,7 +30,7 @@ deploy-to-local-cluster:
 		-f ./charts/$(SERVICE_NAME)/values.yaml \
 		--set image.repository=dev.local/$(SERVICE_NAME),image.tag=$(NOW) \
 		| kubectl apply -f -
-	kubectl wait --for=condition=ready ksvc example-hasura
+	kubectl wait --for=condition=ready ksvc example-hasura --timeout=600s
 
 delete-local-deployment:
 	kubectl ctx $(LOCAL_DEV_CLUSTER)
