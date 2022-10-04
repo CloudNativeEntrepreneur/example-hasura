@@ -1,0 +1,50 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: example-hasura
+spec:
+  template:
+    spec:
+      containers:
+      - image: hasura/graphql-engine:v2.12.0
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: hasura.example-hasura-postgresql.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: hasura.example-hasura-postgresql.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: POSTGRES_DATABASE
+          value: hasura
+        - name: POSTGRES_HOST
+          value: example-hasura-postgresql
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: HASURA_GRAPHQL_DATABASE_URL
+          value: postgres://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DATABASE)
+        ## enable the console served by server - need to run `hasura console` to access instead
+        - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+          value: "false"
+        ## enable debugging mode. It is recommended to disable this in production
+        - name: HASURA_GRAPHQL_DEV_MODE
+          value: "true"
+        - name: HASURA_GRAPHQL_CORS_DOMAIN
+          value: '*'
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          value: af18a72fc1eb42a78aa8c6d679b4842a
+        - name: HASURA_GRAPHQL_JWT_SECRET
+          value: '{"type":"HS256", "key": "a114d68b22894049a7c2203a7228fdcde922a1210675427795b7bf9a0317e16d"}'
+        resources:
+          requests:
+            cpu: 10m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
