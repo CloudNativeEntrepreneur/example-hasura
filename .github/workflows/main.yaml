@@ -38,13 +38,10 @@ jobs:
         major_pattern: "BREAKING CHANGE"
         minor_pattern: "feat:"
 
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ steps.version.outputs.version_tag }}"
-        prerelease: true
-        title: "${{ steps.version.outputs.version_tag }}"
-
+        tag_name: "${{ steps.version.outputs.version_tag }}"
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
