@@ -34,7 +34,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ${{ github.repository }}
+        images: cloudnativeentrepreneur/example-hasura
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
@@ -43,11 +43,11 @@ jobs:
         push: true
         tags: |
           ghcr.io/${{ steps.meta.outputs.tags }}
-          ghcr.io/${{ github.repository }}:latest
-          ghcr.io/${{ github.repository }}:${{ github.sha }}
+          ghcr.io/cloudnativeentrepreneur/example-hasura:latest
+          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.sha }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
-        cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
+        cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
+        cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
 
     # - name: Checkout prod
     #   uses: actions/checkout@v2
