@@ -38,7 +38,7 @@ jobs:
     - name: Update version in manifest
       run: |
         sleep 1
-        cat charts/example-hasura/values.yaml | sed -e "s@- latest@- ${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
+        cat charts/example-hasura/values.yaml | sed -e "s@latest@${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
         git config --global user.name "${{ github.actor }}"
         git add .
         git commit -m "chore: set version to ${{ steps.version.outputs.version_tag }}"
