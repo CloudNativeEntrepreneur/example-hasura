@@ -34,6 +34,10 @@ jobs:
     - name: Application Version
       id: version
       uses: paulhatch/semantic-version@v4.0.2
+      with:
+        major_pattern: "BREAKING CHANGE"
+        minor_pattern: "feat:"
+
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
@@ -51,6 +55,7 @@ jobs:
           ghcr.io/cloudnativeentrepreneur/example-hasura:latest
           ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.sha }}
           ghcr.io/cloudnativeentrepreneur/example-hasura:${{ steps.version.outputs.version }}
+          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ steps.version.outputs.version_tag }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
         cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
