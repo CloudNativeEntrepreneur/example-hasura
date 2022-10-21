@@ -38,7 +38,7 @@ jobs:
         major_pattern: "BREAKING CHANGE"
         minor_pattern: "feat:"
 
-    - uses: "marvinpinto/action-automatic-releases@1.2.1"
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "${{ steps.version.outputs.version_tag }}"
