@@ -42,4 +42,8 @@ jobs:
         git config --global user.name "${{ github.actor }}"
         git add .
         git commit -m "chore: set version to ${{ steps.version.outputs.version_tag }}"
-        git push --tags
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        branch: ${{ steps.version.outputs.version_tag }}
