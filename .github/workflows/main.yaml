@@ -35,23 +35,18 @@ jobs:
             sha: context.sha
           })
 
-    # - name: Checkout prod
-    #   uses: actions/checkout@v2
-    #   with:
-    #     repository: ${{ secrets.GH_ORG }}/todo-prod
-    #     persist-credentials: false
-    #     fetch-depth: 0
-    # - name: Update manifests
-    #   run: |
-    #     sleep 1
-    #     cat apps/${{ github.repo }}/overlays/staging/kustomization.yaml | sed -e "s@- cloudnativeentrepreneur/${{ github.repo }}:.*@- cloudnativeentrepreneur/${{ github.repo }}:${{ github.sha }}@g" | tee apps/${{ github.repo }}/overlays/staging/kustomization.yaml
-    #     git config --global user.email "${{ secrets.GH_ORG }}@cloudnativeentrepreneur.com"
-    #     git config --global user.name "${{ secrets.GH_ORG }}"
-    #     git add .
-    #     git commit -m "Promoting ${{ github.repo }} ${{ github.sha }}"
-    # - name: Push prod
-    #   uses: ad-m/github-push-action@master
-    #   with:
-    #     github_token: ${{ secrets.GH_TOKEN }}
-    #     repository: ${{ secrets.GH_ORG }}/todo-prod
- 
+    - name: Update version in manifest
+      run: |
+        sleep 1
+        cat charts/${{ github.repo }}/values.yaml | sed -e "s@- latest@- ${{ steps.version.outputs.version_tag }}@g" | tee charts/${{ github.repo }}/values.yaml
+        git config --global user.email "${{ secrets.GH_ORG }}@cloudnativeentrepreneur.com"
+        git config --global user.name "${{ secrets.GH_ORG }}"
+        git add .
+        git commit -m "chore: set version to ${{ steps.version.outputs.version_tag }}"
+    
+    - name: Push prod
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        repository: ${{ github.repository }}
+        tags: true
