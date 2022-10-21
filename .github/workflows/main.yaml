@@ -37,19 +37,23 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Create a GitHub release
-      uses: ncipollo/release-action@v1
+    - name: Application Version
+      id: version
+      uses: paulhatch/semantic-version@v4.0.2
       with:
-        tag: ${{ steps.tag_version.outputs.new_tag }}
-        name: Release ${{ steps.tag_version.outputs.new_tag }}
-        body: ${{ steps.tag_version.outputs.changelog }}
+        major_pattern: "BREAKING CHANGE"
+        minor_pattern: "feat:"
 
-    # - name: Application Version
-    #   id: version
-    #   uses: paulhatch/semantic-version@v4.0.2
-    #   with:
-    #     major_pattern: "BREAKING CHANGE"
-    #     minor_pattern: "feat:"
+    - name: Create tag
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/${ steps.version.output.version_tag }",
+            sha: context.sha
+          })
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
