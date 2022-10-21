@@ -15,6 +15,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
+        fetch-depth: 0
 
     # used to run builders for architectures other than the host
     - name: Set up QEMU
@@ -29,6 +30,10 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Application Version
+      id: version
+      uses: paulhatch/semantic-version@v4.0.2
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
@@ -45,6 +50,7 @@ jobs:
           ghcr.io/${{ steps.meta.outputs.tags }}
           ghcr.io/cloudnativeentrepreneur/example-hasura:latest
           ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.sha }}
+          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ steps.version.outputs.version }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
         cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
