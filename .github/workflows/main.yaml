@@ -38,7 +38,7 @@ jobs:
     - name: Update version in manifest
       run: |
         sleep 1
-        cat charts/${{ github.repo }}/values.yaml | sed -e "s@- latest@- ${{ steps.version.outputs.version_tag }}@g" | tee charts/${{ github.repo }}/values.yaml
+        cat charts/example-hasura/values.yaml | sed -e "s@- latest@- ${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
         git config --global user.email "${{ secrets.GH_ORG }}@cloudnativeentrepreneur.com"
         git config --global user.name "${{ secrets.GH_ORG }}"
         git add .
