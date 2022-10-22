@@ -52,3 +52,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ steps.version.outputs.version_tag }}
+        tags: true
