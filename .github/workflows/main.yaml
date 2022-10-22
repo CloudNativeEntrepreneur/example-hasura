@@ -37,12 +37,13 @@ jobs:
 
     - name: Update version in manifest
       run: |
-        sleep 1
         cat charts/example-hasura/values.yaml | sed -e "s@latest@${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
+        
+    - name: Commit changes
+      run: |
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add -A
-        git commit -m "chore: set version to ${{ steps.version.outputs.version_tag }}"
+        git commit -am "chore: set version to ${{ steps.version.outputs.version_tag }}"
 
     - name: Push changes
       uses: ad-m/github-push-action@master
