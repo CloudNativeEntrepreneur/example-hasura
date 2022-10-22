@@ -46,7 +46,6 @@ jobs:
     #         ref: "refs/tags/${{ steps.version.outputs.version_tag }}",
     #         sha: context.sha
     #       })
-
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
