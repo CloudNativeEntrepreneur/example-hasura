@@ -35,7 +35,6 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git commit -am "chore: set version to ${{ steps.version.outputs.version_tag }}"
         git tag -a ${{ steps.version.outputs.version_tag }} -m "${{ steps.version.outputs.version_tag }}"
-
     # - name: Create tag
     #   uses: actions/github-script@v6
     #   with:
@@ -50,5 +49,4 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ steps.version.outputs.version_tag }}
         tags: true
