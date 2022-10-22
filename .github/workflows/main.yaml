@@ -24,6 +24,7 @@ jobs:
       with:
         major_pattern: "BREAKING CHANGE"
         minor_pattern: "feat:"
+        bump_each_commit: true
 
     - name: Update version in manifest
       run: |
