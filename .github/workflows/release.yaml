@@ -44,3 +44,9 @@ jobs:
         github_token: ${{ secrets.GH_TOKEN }}
         branch: ${{ steps.version.outputs.version_tag }}
         tags: true
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version_tag }}
+        generate_release_notes: true

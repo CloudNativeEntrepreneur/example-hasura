@@ -36,7 +36,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: cloudnativeentrepreneur/example-hasura
+        images: ghcr.io/cloudnativeentrepreneur/example-hasura
 
     - name: debug
       run: |
