@@ -21,7 +21,7 @@ jobs:
 
     - name: Application Version
       id: version
-      uses: paulhatch/semantic-version@v4.0.2
+      uses: paulhatch/semantic-version@v4.0.3
       with:
         major_pattern: "BREAKING CHANGE"
         minor_pattern: "feat:"
