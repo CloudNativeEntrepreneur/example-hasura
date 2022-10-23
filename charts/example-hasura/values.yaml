@@ -3,26 +3,21 @@
 # Declare variables to be passed into your templates.
 image:
   repository: ghcr.io/cloudnativeentrepreneur/example-hasura
-  tag: latest
+  tag: v0.6.12
   pullPolicy: IfNotPresent
-
 # define environment variables here as a map of key: value
 env:
-
 knativeDeploy: true
 knative:
   minScale: 1
   maxScale: 3
-
 runMigrations: true
 runSeeds: false
-
 service:
   name: example-hasura
   type: ClusterIP
   internalPort: 8080
   externalPort: 80
-
 probePath: /healthz
 livenessProbe:
   initialDelaySeconds: 10
@@ -34,7 +29,6 @@ readinessProbe:
   periodSeconds: 10
   successThreshold: 1
   timeoutSeconds: 1
-
 resources:
   limits:
     cpu: '1'
@@ -42,7 +36,6 @@ resources:
   requests:
     cpu: 200m
     memory: 512Mi
-
 hasura:
   devMode: true
   psql:
@@ -94,12 +87,11 @@ hasura:
       max_wal_size: 4GB
     volume:
       size: 8Gi
-
 readmodel:
   psql:
     name: example-readmodel-postgresql
     database: readmodel
     username: readmodel
-    hostname: 
+    hostname:
       write: example-readmodel-postgresql
       read: example-readmodel-postgresql-repl
