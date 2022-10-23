@@ -38,11 +38,6 @@ jobs:
       with:
         images: ghcr.io/cloudnativeentrepreneur/example-hasura
 
-    - name: debug
-      run: |
-        echo "Tags:\n\n${{ steps.meta.outputs.tags }}\n\n"
-        echo "Ref Name:\n\n${{ github.ref_name }}\n\n"
-
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
@@ -50,8 +45,6 @@ jobs:
         push: true
         tags: |
           ghcr.io/${{ steps.meta.outputs.tags }}
-          ghcr.io/cloudnativeentrepreneur/example-hasura:latest
-          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.ref_name }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
         cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
