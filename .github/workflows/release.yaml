@@ -1,0 +1,46 @@
+name: main
+on:
+  push:
+    branches:
+    - main
+jobs:
+
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+
+    - name: Application Version
+      id: version
+      uses: paulhatch/semantic-version@v4.0.2
+      with:
+        major_pattern: "BREAKING CHANGE"
+        minor_pattern: "feat:"
+        bump_each_commit: true
+
+    - name: Update version in manifest
+      run: |
+        cat charts/example-hasura/values.yaml | sed -e "s@latest@${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
+        
+    - name: Commit changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git commit -am "chore: set version to ${{ steps.version.outputs.version_tag }}"
+        git tag -a ${{ steps.version.outputs.version_tag }} -m "${{ steps.version.outputs.version_tag }}"
+    
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        branch: ${{ steps.version.outputs.version_tag }}
+        tags: true

@@ -1,16 +1,15 @@
-name: main
+name: publish-and-promote
 on:
   push:
-    branches:
-    - main
+    tags:
+    - v*.*.*
 jobs:
 
-  main:
+  publish:
     runs-on: ubuntu-latest
 
     permissions:
       packages: write
-      contents: write
 
     steps:
     - name: Checkout
@@ -18,32 +17,6 @@ jobs:
       with:
         persist-credentials: false
         fetch-depth: 0
-
-    - name: Application Version
-      id: version
-      uses: paulhatch/semantic-version@v4.0.2
-      with:
-        major_pattern: "BREAKING CHANGE"
-        minor_pattern: "feat:"
-        bump_each_commit: true
-
-    - name: Update version in manifest
-      run: |
-        cat charts/example-hasura/values.yaml | sed -e "s@latest@${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
-        
-    - name: Commit changes
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git commit -am "chore: set version to ${{ steps.version.outputs.version_tag }}"
-        git tag -a ${{ steps.version.outputs.version_tag }} -m "${{ steps.version.outputs.version_tag }}"
-    
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ steps.version.outputs.version_tag }}
-        tags: true
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
@@ -73,18 +46,19 @@ jobs:
           ghcr.io/${{ steps.meta.outputs.tags }}
           ghcr.io/cloudnativeentrepreneur/example-hasura:latest
           ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.sha }}
-          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ steps.version.outputs.version }}
-          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ steps.version.outputs.version_tag }}
+          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.ref_name }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
         cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.version.outputs.version_tag }}
-        generate_release_notes: true
+  promote:
+    needs: publish
+    runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
+    steps:
     - name: Checkout production environment
       uses: actions/checkout@v3
       with:
@@ -95,14 +69,14 @@ jobs:
     - name: Update prod environment
       uses: mikefarah/yq@master
       with:
-        cmd: yq -i '.spec.source.targetRevision = "${{ steps.version.outputs.version_tag }}"' helm/templates/example-hasura.yaml
+        cmd: yq -i '.spec.source.targetRevision = "${{ github.ref_name }}"' helm/templates/example-hasura.yaml
 
     - name: Commit Prod Env Changes
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"   
         git add .
-        git commit -m "feat: Promoting example-hasura to ${{ steps.version.outputs.version_tag }}"
+        git commit -m "feat: Promoting example-hasura to ${{ github.ref_name }}"
 
     - name: Push prod
       uses: ad-m/github-push-action@master
