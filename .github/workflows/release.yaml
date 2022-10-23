@@ -32,10 +32,6 @@ jobs:
       with:
         cmd: yq -i '.image.tag = "${{ steps.version.outputs.version_tag }}"' charts/example-hasura/values.yaml
 
-    # - name: Update version in manifest
-    #   run: |
-    #     cat charts/example-hasura/values.yaml | sed -e "s@latest@${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
-        
     - name: Commit changes
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
