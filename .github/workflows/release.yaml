@@ -28,8 +28,13 @@ jobs:
         bump_each_commit: true
 
     - name: Update version in manifest
-      run: |
-        cat charts/example-hasura/values.yaml | sed -e "s@latest@${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
+      uses: mikefarah/yq@master
+      with:
+        cmd: yq -i '.image.tag = "${{ steps.version.outputs.version_tag }}"' charts/example-hasura/values.yaml
+
+    # - name: Update version in manifest
+    #   run: |
+    #     cat charts/example-hasura/values.yaml | sed -e "s@latest@${{ steps.version.outputs.version_tag }}@g" | tee charts/example-hasura/values.yaml
         
     - name: Commit changes
       run: |
