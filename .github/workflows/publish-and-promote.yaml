@@ -38,6 +38,11 @@ jobs:
       with:
         images: cloudnativeentrepreneur/example-hasura
 
+    - name: debug
+      run: |
+        echo "Tags:\n\n${{ steps.meta.outputs.tags }}\n\n"
+        echo "Ref Name:\n\n${{ github.ref_name }}\n\n"
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
