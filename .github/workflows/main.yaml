@@ -98,7 +98,9 @@ jobs:
         cmd: yq -i '.spec.source.targetRevision = "${{ steps.version.outputs.version_tag }}"' helm/templates/example-hasura.yaml
 
     - name: Commit Prod Env Changes
-      run: |        
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"   
         git add .
         git commit -m "feat: Promoting example-hasura to ${{ steps.version.outputs.version_tag }}"
 
