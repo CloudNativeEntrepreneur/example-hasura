@@ -91,6 +91,7 @@ jobs:
         repository: CloudNativeEntrepreneur/example-prod-env
         persist-credentials: false
         fetch-depth: 0
+        ref: main
 
     - name: Update prod environment
       uses: mikefarah/yq@master
