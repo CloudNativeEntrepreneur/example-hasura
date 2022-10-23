@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 image:
   repository: ghcr.io/cloudnativeentrepreneur/example-hasura
-  tag: latest
+  tag: v0.5.3
   pullPolicy: IfNotPresent
 
 # define environment variables here as a map of key: value
