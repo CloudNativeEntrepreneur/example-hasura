@@ -1,4 +1,5 @@
 comment:
+  on-update: recreate
   header: |
     Thank you for contributing to this repository :tada:.
 

@@ -7,48 +7,71 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        submodules: recursive
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-    - name: Login to DockerHub
-      uses: docker/login-action@v2 
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Build and push container image
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ghcr.io/cloudnativeentrepreneur/example-hasura
+
+    - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
+        context: .
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/demo-hasura:pr-${{ github.event.pull_request.number }}
-    - name: Setup Kube config
-      uses: azure/k8s-set-context@v3
-      with:
-        method: kubeconfig
-        kubeconfig: ${{ secrets.KUBE_CONFIG }}
-    - name: Deploy preview
-      run: |
-        # Install vCluster
-        curl -s -L "https://github.com/loft-sh/vcluster/releases/latest" | sed -nE 's!.*"([^"]*vcluster-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o vcluster && chmod +x vcluster;
-        sudo mv vcluster /usr/local/bin;
+          ghcr.io/${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
+        cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
 
-        # Create a cluster
-        vcluster create demo-hasura-pr-${{ github.event.pull_request.number }} --namespace prs --expose 
-        vcluster connect demo-hasura-pr-${{ github.event.pull_request.number }} --namespace prs
-        export KUBECONFIG=$PWD/kubeconfig.yaml
-        sleep 5
-        kubectl get ingresses
+    # - name: Build and push container image
+    #   uses: docker/build-push-action@v3
+    #   with:
+    #     push: true
+    #     tags: |
+    #       ghcr.io/cloudnativeentrepreneur/example-hasura:pr-${{ github.event.pull_request.number }}
+    
+    # - name: Setup Kube config
+    #   uses: azure/k8s-set-context@v3
+    #   with:
+    #     method: kubeconfig
+    #     kubeconfig: ${{ secrets.KUBE_CONFIG }}
+    
+    # - name: Deploy preview
+    #   run: |
+    #     # Install vCluster
+    #     curl -s -L "https://github.com/loft-sh/vcluster/releases/latest" | sed -nE 's!.*"([^"]*vcluster-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o vcluster && chmod +x vcluster;
+    #     sudo mv vcluster /usr/local/bin;
 
-        # Deploy
-        cd kustomize/overlays/preview
-        kustomize edit set image vfarcic/demo-hasura=${{ secrets.DOCKERHUB_USERNAME }}/demo-hasura:pr-${{ github.event.pull_request.number }}
-        kustomize build | kubectl apply --filename -
-        kubectl rollout status deployment demo-hasura
-    - name: Test
-      run: |
-        echo "I was to lazy to write tests"
+    #     # Create a cluster
+    #     vcluster create example-hasura-pr-${{ github.event.pull_request.number }} --namespace prs --expose 
+    #     vcluster connect example-hasura-pr-${{ github.event.pull_request.number }} --namespace prs
+    #     export KUBECONFIG=$PWD/kubeconfig.yaml
+    #     sleep 5
+    #     kubectl get ingresses
+
+    #     # Deploy
+    #     cd kustomize/overlays/preview
+    #     kustomize edit set image vfarcic/example-hasura=cloudnativeentrepreneur/example-hasura:pr-${{ github.event.pull_request.number }}
+    #     kustomize build | kubectl apply --filename -
+    #     kubectl rollout status deployment example-hasura
+    # - name: Test
+    #   run: |
+    #     echo "I was to lazy to write tests"
