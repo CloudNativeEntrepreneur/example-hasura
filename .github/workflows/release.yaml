@@ -52,13 +52,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Create Release
-      uses: mikepenz/action-gh-release@v0.2.0-a03 #softprops/action-gh-release
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
+        tag_name: ${{ steps.version.outputs.version_tag }}
+        generate_release_notes: true
         body: ${{steps.changelog.outputs.changelog}}
-
-    # - name: Release
-    #   uses: softprops/action-gh-release@v1
-    #   with:
-    #     tag_name: ${{ steps.version.outputs.version_tag }}
-    #     generate_release_notes: true
