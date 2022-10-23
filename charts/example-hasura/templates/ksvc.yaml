@@ -20,6 +20,7 @@ spec:
       - image: hasura/graphql-engine:v2.0.10
         ports:
         - containerPort: {{ .Values.service.internalPort }}
+          protocol: TCP
         env:
         - name: METADATA_POSTGRES_USERNAME
           valueFrom:
