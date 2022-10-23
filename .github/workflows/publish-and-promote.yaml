@@ -46,7 +46,6 @@ jobs:
         tags: |
           ghcr.io/${{ steps.meta.outputs.tags }}
           ghcr.io/cloudnativeentrepreneur/example-hasura:latest
-          ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.sha }}
           ghcr.io/cloudnativeentrepreneur/example-hasura:${{ github.ref_name }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
