@@ -4,7 +4,7 @@ kind: Job
 metadata:
   name: {{ .Values.service.name }}-migrations-{{ lower .Values.image.tag | replace "_" "-" }}
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    chart: {{ .Values.service.name }}-{{ lower .Values.image.tag | replace "_" "-" }}
 spec:
   template:
     metadata:

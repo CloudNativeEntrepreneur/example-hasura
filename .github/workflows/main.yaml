@@ -84,3 +84,22 @@ jobs:
       with:
         tag_name: ${{ steps.version.outputs.version_tag }}
         generate_release_notes: true
+
+    - name: Checkout production environment
+      uses: actions/checkout@v2
+      with:
+        repository: cloudnativeentrepreneur/example-prod-env
+        persist-credentials: false
+        fetch-depth: 0
+
+    - name: Update prod environment
+      run: |
+        sleep 1
+        yq -i '.spec.source.targetRevision = "${{ steps.version.outputs.version_tag }}"' helm/templates/example-hasura.yaml
+        git add .
+        git commit -m "Promoting example-hasura to ${{ steps.version.outputs.version_tag }}"
+    - name: Push prod
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        repository: cloudnativeentrepreneur/example-prod-env
