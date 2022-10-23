@@ -86,7 +86,7 @@ jobs:
         generate_release_notes: true
 
     - name: Checkout production environment
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: CloudNativeEntrepreneur/example-prod-env
         persist-credentials: false
