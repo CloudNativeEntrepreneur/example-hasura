@@ -32,10 +32,6 @@ jobs:
       with:
         cmd: yq -i '.image.tag = "${{ steps.version.outputs.version_tag }}"' charts/example-hasura/values.yaml
 
-    - uses: nuuday/github-changelog-action@v1.0.0
-      with:
-        next_version: ${{ steps.version.outputs.version_tag }} 
-
     - name: Commit changes
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
