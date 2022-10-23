@@ -46,8 +46,19 @@ jobs:
         branch: ${{ steps.version.outputs.version_tag }}
         tags: true
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
+    - name: Build Changelog
+      id: changelog
+      uses: mikepenz/release-changelog-builder-action@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Release
+      uses: mikepenz/action-gh-release@latest #softprops/action-gh-release
       with:
-        tag_name: ${{ steps.version.outputs.version_tag }}
-        generate_release_notes: true
+        body: ${{steps.changelog.outputs.changelog}}
+
+    # - name: Release
+    #   uses: softprops/action-gh-release@v1
+    #   with:
+    #     tag_name: ${{ steps.version.outputs.version_tag }}
+    #     generate_release_notes: true
