@@ -36,7 +36,7 @@ jobs:
         context: .
         push: true
         tags: |
-          ghcr.io/${{ steps.meta.outputs.tags }}
+          ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
         cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
