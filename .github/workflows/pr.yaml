@@ -4,7 +4,7 @@ on:
     branches:
     - main
 jobs:
-  build:
+  pr:
     runs-on: ubuntu-latest
     steps:
 
@@ -40,13 +40,6 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
         cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
-
-    # - name: Build and push container image
-    #   uses: docker/build-push-action@v3
-    #   with:
-    #     push: true
-    #     tags: |
-    #       ghcr.io/cloudnativeentrepreneur/example-hasura:pr-${{ github.event.pull_request.number }}
     
     # - name: Setup Kube config
     #   uses: azure/k8s-set-context@v3

@@ -1,9 +1,9 @@
-name: pr
+name: pr-close
 on:
   pull_request:
     types: [ closed ]
 jobs:
-  build:
+  pr-close:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
