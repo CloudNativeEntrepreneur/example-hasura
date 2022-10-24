@@ -74,14 +74,14 @@ jobs:
     - name: Update prod environment
       uses: mikefarah/yq@master
       with:
-        cmd: yq -i '.spec.source.targetRevision = "${{ github.ref_name }}"' helm/templates/example-hasura.yaml
+        cmd: yq -i '.spec.source.targetRevision = "${{ github.ref_name }}"' helm/templates/${{ github.event.repository.name }}.yaml
 
     - name: Commit Prod Env Changes
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"   
         git add .
-        git commit -m "feat: Promoting example-hasura to ${{ github.ref_name }}"
+        git commit -m "feat: Promoting ${{ github.event.repository.name }} to ${{ github.ref_name }}"
 
     - name: Push prod
       uses: ad-m/github-push-action@master
