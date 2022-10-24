@@ -18,7 +18,7 @@ jobs:
       run: |
         echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
     # - name: use REPO
-    #   run: echo "The value of REPO is: ${REPO}"
+    #   run: echo "The value of REPO is: ${{ env.REPO }}"
 
     - name: Checkout
       uses: actions/checkout@v3
@@ -43,7 +43,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ghcr.io/${REPO}
+        images: ghcr.io/${{ env.REPO }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
@@ -53,8 +53,8 @@ jobs:
         tags: |
           ghcr.io/${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=registry,ref=ghcr.io/${REPO}:buildcache
-        cache-to: type=registry,ref=ghcr.io/${REPO}:buildcache,mode=max
+        cache-from: type=registry,ref=ghcr.io/${{ env.REPO }}:buildcache
+        cache-to: type=registry,ref=ghcr.io/${{ env.REPO }}:buildcache,mode=max
 
   promote:
     needs: publish
