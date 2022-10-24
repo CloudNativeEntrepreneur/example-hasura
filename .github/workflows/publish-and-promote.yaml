@@ -13,6 +13,13 @@ jobs:
       contents: write
 
     steps:
+
+    - name: downcase REPO
+      run: |
+        echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+    # - name: use REPO
+    #   run: echo "The value of REPO is: ${{ env.REPO }}"
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -36,7 +43,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ghcr.io/cloudnativeentrepreneur/example-hasura
+        images: ghcr.io/${{ env.REPO }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
@@ -46,8 +53,8 @@ jobs:
         tags: |
           ghcr.io/${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache
-        cache-to: type=registry,ref=ghcr.io/cloudnativeentrepreneur/example-hasura:buildcache,mode=max
+        cache-from: type=registry,ref=ghcr.io/${{ env.REPO }}:buildcache
+        cache-to: type=registry,ref=ghcr.io/${{ env.REPO }}:buildcache,mode=max
 
   promote:
     needs: publish
@@ -60,7 +67,7 @@ jobs:
     - name: Checkout production environment
       uses: actions/checkout@v3
       with:
-        repository: CloudNativeEntrepreneur/example-prod-env
+        repository: cloudnativeentrepreneur/example-prod-env
         persist-credentials: false
         fetch-depth: 0
 

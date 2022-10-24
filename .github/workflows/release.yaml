@@ -13,6 +13,13 @@ jobs:
       contents: write
 
     steps:
+
+    - name: downcase REPO
+      run: |
+        echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+    # - name: use REPO
+    #   run: echo "The value of REPO is: ${{ env.REPO }}"
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -30,7 +37,7 @@ jobs:
     - name: Update version in manifest
       uses: mikefarah/yq@master
       with:
-        cmd: yq -i '.image.tag = "${{ steps.version.outputs.version_tag }}"' charts/example-hasura/values.yaml
+        cmd: yq -i '.image.tag = "${{ steps.version.outputs.version_tag }}"' charts/${{ github.event.repository.name }}/values.yaml
 
     - name: Commit changes
       run: |
