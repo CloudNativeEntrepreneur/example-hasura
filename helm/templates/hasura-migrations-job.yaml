@@ -23,6 +23,8 @@ spec:
       containers:
       - name: migrations
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullSecrets:
+        - name: ghcr
         env:
         - name: HASURA_GRAPHQL_ENDPOINT
           value: http://example-hasura.{{ .Release.Namespace }}.svc.cluster.local
