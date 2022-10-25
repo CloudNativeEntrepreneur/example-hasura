@@ -12,6 +12,8 @@ spec:
         sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: {{ .Values.service.name }}-cli
+      imagePullSecrets:
+        - name: ghcr
       initContainers:
       - name: wait-for-resources
         image: bitnami/kubectl:1.24
@@ -23,8 +25,6 @@ spec:
       containers:
       - name: migrations
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullSecrets:
-        - name: ghcr
         env:
         - name: HASURA_GRAPHQL_ENDPOINT
           value: http://example-hasura.{{ .Release.Namespace }}.svc.cluster.local
