@@ -14,7 +14,7 @@ spec:
       serviceAccountName: {{ .Values.service.name }}-cli
       initContainers:
       - name: wait-for-resources
-        image: bitnami/kubectl:1.21
+        image: bitnami/kubectl:1.24
         command: [
           'sh',
           '-c',
