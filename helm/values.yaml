@@ -9,6 +9,8 @@ image:
 # define environment variables here as a map of key: value
 env:
 
+secretEnv: staging
+
 knativeDeploy: true
 knative:
   minScale: 1
@@ -48,10 +50,15 @@ hasura:
   psql:
     name: example-hasura-metadata-postgresql
     database: metadata
-    username: metadata
+    username: postgres
+    hostname: 
+      write: example-hasura-metadata-postgresql
+      read: example-hasura-metadata-postgresql-repl
+      pool: example-hasura-metadata-db-pgpool
     numberOfInstances: 1
     enableLogicalBackup: false
     enableShmVolume: true
+    # we're using pgpool instead of pgbouncer with zalando pgo - so, we already have a connection pooler - don't enable.
     enableConnectionPooler: false
     enableReplicaConnectionPooler: false
     connectionPooler:
@@ -99,7 +106,28 @@ readmodel:
   psql:
     name: example-readmodel-postgresql
     database: readmodel
-    username: readmodel
+    username: postgres
     hostname: 
       write: example-readmodel-postgresql
       read: example-readmodel-postgresql-repl
+      pool: example-readmodel-pgpool
+
+sourced:
+  psql:
+    name: example-sourced-db-postgresql
+    database: sourced
+    username: postgres
+    hostname: 
+      write: example-sourced-db-postgresql
+      read: example-sourced-db-postgresql-repl
+      pool: example-sourced-db-pgpool
+
+web3auth:
+  psql:
+    name: web3auth-db-postgresql
+    database: web3auth
+    username: postgres
+    hostname: 
+      write: web3auth-db-postgresql
+      read: web3auth-db-postgresql-repl
+      pool: web3auth-db-pgpool

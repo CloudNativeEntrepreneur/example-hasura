@@ -16,12 +16,25 @@ spec:
         autoscaling.knative.dev/minScale: {{ .Values.knative.minScale | quote }}
         autoscaling.knative.dev/maxScale: {{ .Values.knative.maxScale | quote }}
     spec:
+      # affinity:
+      #   podAntiAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #     - podAffinityTerm:
+      #         labelSelector:
+      #           matchExpressions:
+      #           - key: serving.knative.dev/service
+      #             operator: In
+      #             values:
+      #             - {{ .Values.service.name }}
+      #         topologyKey: failure-domain.beta.kubernetes.io/zone
+      #       weight: 100
       containers:
-      - image: hasura/graphql-engine:v2.0.10
+      - image: hasura/graphql-engine:v2.2.1
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-          protocol: TCP
         env:
+
+        # metadata db
         - name: METADATA_POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:
@@ -40,6 +53,8 @@ spec:
           value: "5432"
         - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
           value: postgres://$(METADATA_POSTGRES_USERNAME):$(METADATA_POSTGRES_PASSWORD)@$(METADATA_POSTGRES_HOST):$(METADATA_POSTGRES_PORT)/$(METADATA_POSTGRES_DATABASE)
+        
+        # ReadModel / default db
         - name: READMODEL_POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:
@@ -58,6 +73,50 @@ spec:
           value: "5432"
         - name: HASURA_GRAPHQL_DATABASE_URL
           value: postgres://$(READMODEL_POSTGRES_USERNAME):$(READMODEL_POSTGRES_PASSWORD)@$(READMODEL_POSTGRES_HOST):$(READMODEL_POSTGRES_PORT)/$(READMODEL_POSTGRES_DATABASE)
+        
+
+        # sourced db
+        - name: SOURCED_POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sourced.psql.username }}.{{ .Values.sourced.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: SOURCED_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sourced.psql.username }}.{{ .Values.sourced.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: SOURCED_POSTGRES_DATABASE
+          value: {{ .Values.sourced.psql.database }}
+        - name: SOURCED_POSTGRES_HOST
+          value: {{ .Values.sourced.psql.hostname.write }}.{{ .Release.Namespace }}.svc.cluster.local
+        - name: SOURCED_POSTGRES_PORT
+          value: "5432"
+        - name: SOURCED_DATABASE_URL
+          value: postgres://$(SOURCED_POSTGRES_USERNAME):$(SOURCED_POSTGRES_PASSWORD)@$(SOURCED_POSTGRES_HOST):$(SOURCED_POSTGRES_PORT)/$(SOURCED_POSTGRES_DATABASE)
+
+
+        # web3auth db
+        - name: WEB3AUTH_POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.web3auth.psql.username }}.{{ .Values.web3auth.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: WEB3AUTH_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.web3auth.psql.username }}.{{ .Values.web3auth.psql.name }}.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: WEB3AUTH_POSTGRES_DATABASE
+          value: {{ .Values.web3auth.psql.database }}
+        - name: WEB3AUTH_POSTGRES_HOST
+          value: {{ .Values.web3auth.psql.hostname.write }}.{{ .Release.Namespace }}.svc.cluster.local
+        - name: WEB3AUTH_POSTGRES_PORT
+          value: "5432"
+        - name: WEB3AUTH_DATABASE_URL
+          value: postgres://$(WEB3AUTH_POSTGRES_USERNAME):$(WEB3AUTH_POSTGRES_PASSWORD)@$(WEB3AUTH_POSTGRES_HOST):$(WEB3AUTH_POSTGRES_PORT)/$(WEB3AUTH_POSTGRES_DATABASE)
+
+
         ## enable the console served by server - need to run `hasura console` to access instead
         - name: HASURA_GRAPHQL_ENABLE_CONSOLE
           value: "false"
@@ -66,10 +125,37 @@ spec:
           value: {{ .Values.hasura.devMode | quote }}
         - name: HASURA_GRAPHQL_CORS_DOMAIN
           value: '*'
+        - name: HASURA_GRAPHQL_UNAUTHORIZED_ROLE
+          value: anonymous
+
+{{- if .Values.localDev }}
         - name: HASURA_GRAPHQL_ADMIN_SECRET
-          value: af18a72fc1eb42a78aa8c6d679b4842a
+          value: "af18a72fc1eb42a78aa8c6d679b4842a"
         - name: HASURA_GRAPHQL_JWT_SECRET
           value: '{"type":"HS256", "key": "a114d68b22894049a7c2203a7228fdcde922a1210675427795b7bf9a0317e16d"}'
+        - name: EXAMPLE_TODO_MODEL
+          value: host.docker.internal:5002
+        - name: EXAMPLE_POLICY_SERVICE
+          value: host.docker.internal:5020
+{{- else }}
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: example-hasura
+              key: adminSecret
+        - name: HASURA_GRAPHQL_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: example-hasura
+              key: jwtSecret
+
+        - name: EXAMPLE_TODO_MODEL
+          value: example-todo-model-service.{{ .Release.Namespace }}.svc.cluster.local
+        - name: EXAMPLE_POLICY_SERVICE
+          value: example-policy-service.{{ .Release.Namespace }}.svc.cluster.local
+        
+{{- end }}
+
 {{- range $pkey, $pval := .Values.env }}
         - name: {{ $pkey }}
           value: {{ quote $pval }}

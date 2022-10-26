@@ -35,7 +35,7 @@ spec:
 {{- end }}
 
   postgresql:
-    version: "13"
+    version: "14"
     parameters:
 {{ toYaml .Values.hasura.psql.parameters | indent 6 }}
 

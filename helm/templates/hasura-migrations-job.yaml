@@ -4,7 +4,7 @@ kind: Job
 metadata:
   name: {{ .Values.service.name }}-migrations-{{ lower .Values.image.tag | replace "_" "-" }}
   labels:
-    chart: {{ .Values.service.name }}-{{ lower .Values.image.tag | replace "_" "-" }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
   template:
     metadata:
@@ -28,7 +28,15 @@ spec:
         env:
         - name: HASURA_GRAPHQL_ENDPOINT
           value: http://example-hasura.{{ .Release.Namespace }}.svc.cluster.local
+{{- if .Values.localDev }}
         - name: HASURA_GRAPHQL_ADMIN_SECRET
-          value: af18a72fc1eb42a78aa8c6d679b4842a
+          value: "af18a72fc1eb42a78aa8c6d679b4842a"
+{{- else }}
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: example-hasura
+              key: adminSecret
+{{- end }}
       restartPolicy: Never
 {{- end }}
