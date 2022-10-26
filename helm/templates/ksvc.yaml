@@ -32,6 +32,7 @@ spec:
       - image: hasura/graphql-engine:v2.2.1
         ports:
         - containerPort: {{ .Values.service.internalPort }}
+          protocol: TCP
         env:
 
         # metadata db
