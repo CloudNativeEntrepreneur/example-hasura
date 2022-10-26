@@ -1,6 +1,10 @@
 table:
   name: todos
   schema: public
+object_relationships:
+- name: web3auth_user
+  using:
+    foreign_key_constraint_on: address
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -14,4 +18,5 @@ select_permissions:
     filter:
       address:
         _eq: X-Hasura-User-Id
+    limit: 25
   role: user
