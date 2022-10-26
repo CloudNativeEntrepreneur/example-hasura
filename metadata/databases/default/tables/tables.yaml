@@ -1,1 +1,2 @@
 - "!include public_todos.yaml"
+- "!include public_web3auth_users.yaml"

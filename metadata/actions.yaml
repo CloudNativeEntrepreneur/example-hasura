@@ -2,25 +2,25 @@ actions:
 - name: command_todo_complete
   definition:
     kind: synchronous
-    handler: http://{{IG_TODO_MODEL}}/todo.complete
+    handler: http://{{EXAMPLE_TODO_MODEL}}/todo.complete
   permissions:
   - role: user
 - name: command_todo_initialize
   definition:
     kind: synchronous
-    handler: http://{{IG_TODO_MODEL}}/todo.initialize
+    handler: http://{{EXAMPLE_TODO_MODEL}}/todo.initialize
   permissions:
   - role: user
 - name: command_todo_remove
   definition:
     kind: synchronous
-    handler: http://{{IG_TODO_MODEL}}/todo.remove
+    handler: http://{{EXAMPLE_TODO_MODEL}}/todo.remove
   permissions:
   - role: user
 - name: command_todo_reopen
   definition:
     kind: synchronous
-    handler: http://{{IG_TODO_MODEL}}/todo.reopen
+    handler: http://{{EXAMPLE_TODO_MODEL}}/todo.reopen
   permissions:
   - role: user
 custom_types:

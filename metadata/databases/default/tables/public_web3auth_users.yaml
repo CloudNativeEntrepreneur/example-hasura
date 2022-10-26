@@ -1,0 +1,18 @@
+table:
+  name: web3auth_users
+  schema: public
+select_permissions:
+- permission:
+    columns:
+    - address
+    - username
+    filter: {}
+    limit: 25
+  role: anonymous
+- permission:
+    columns:
+    - address
+    - username
+    filter: {}
+    limit: 25
+  role: user
