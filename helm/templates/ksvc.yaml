@@ -129,16 +129,6 @@ spec:
         - name: HASURA_GRAPHQL_UNAUTHORIZED_ROLE
           value: anonymous
 
-{{- if .Values.localDev }}
-        - name: HASURA_GRAPHQL_ADMIN_SECRET
-          value: "af18a72fc1eb42a78aa8c6d679b4842a"
-        - name: HASURA_GRAPHQL_JWT_SECRET
-          value: '{"type":"HS256", "key": "a114d68b22894049a7c2203a7228fdcde922a1210675427795b7bf9a0317e16d"}'
-        - name: EXAMPLE_TODO_MODEL
-          value: host.docker.internal:5002
-        - name: EXAMPLE_POLICY_SERVICE
-          value: host.docker.internal:5020
-{{- else }}
         - name: HASURA_GRAPHQL_ADMIN_SECRET
           valueFrom:
             secretKeyRef:
@@ -149,12 +139,16 @@ spec:
             secretKeyRef:
               name: example-hasura
               key: jwtSecret
-
+{{- if .Values.local }}
+        - name: EXAMPLE_TODO_MODEL
+          value: host.docker.internal:5002
+        - name: EXAMPLE_POLICY_SERVICE
+          value: host.docker.internal:5020
+{{- else }}
         - name: EXAMPLE_TODO_MODEL
           value: example-todo-model-service.{{ .Release.Namespace }}.svc.cluster.local
         - name: EXAMPLE_POLICY_SERVICE
           value: example-policy-service.{{ .Release.Namespace }}.svc.cluster.local
-        
 {{- end }}
 
 {{- range $pkey, $pval := .Values.env }}

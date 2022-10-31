@@ -13,6 +13,8 @@ knative:
   minScale: 1
   maxScale: 3
 
+local: false
+
 runMigrations: true
 runSeeds: false
 
