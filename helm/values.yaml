@@ -9,9 +9,6 @@ image:
 # define environment variables here as a map of key: value
 env:
 
-secretEnv: staging
-
-knativeDeploy: true
 knative:
   minScale: 1
   maxScale: 3

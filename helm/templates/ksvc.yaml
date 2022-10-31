@@ -1,4 +1,3 @@
-{{- if .Values.knativeDeploy }}
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -6,6 +5,7 @@ metadata:
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
   annotations:
+    argocd.argoproj.io/sync-wave: "1"
 {{- if .Values.knative.subdomain }}
     custom-hostname: {{ .Values.knative.subdomain }}
 {{- end }}
@@ -169,4 +169,3 @@ spec:
         #     path: {{ .Values.livenessProbe.probePath | default .Values.probePath }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
-{{- end }}

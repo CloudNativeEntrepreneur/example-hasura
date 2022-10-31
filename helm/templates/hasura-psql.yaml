@@ -2,6 +2,8 @@ apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
   name: example-hasura-metadata-postgresql
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   teamId: example
 
