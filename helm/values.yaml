@@ -3,27 +3,21 @@
 # Declare variables to be passed into your templates.
 image:
   repository: ghcr.io/cloudnativeentrepreneur/example-hasura
-  tag: latest
+  tag: v0.12.2
   pullPolicy: IfNotPresent
-
 # define environment variables here as a map of key: value
 env:
-
 knative:
   minScale: 1
   maxScale: 3
-
 local: false
-
 runMigrations: true
 runSeeds: false
-
 service:
   name: example-hasura
   type: ClusterIP
   internalPort: 8080
   externalPort: 80
-
 probePath: /healthz
 livenessProbe:
   initialDelaySeconds: 10
@@ -35,7 +29,6 @@ readinessProbe:
   periodSeconds: 10
   successThreshold: 1
   timeoutSeconds: 1
-
 resources:
   limits:
     cpu: '1'
@@ -43,14 +36,13 @@ resources:
   requests:
     cpu: 200m
     memory: 512Mi
-
 hasura:
   devMode: true
   psql:
     name: example-hasura-metadata-postgresql
     database: metadata
     username: postgres
-    hostname: 
+    hostname:
       write: example-hasura-metadata-postgresql
       read: example-hasura-metadata-postgresql-repl
       pool: example-hasura-metadata-db-pgpool
@@ -100,33 +92,30 @@ hasura:
       max_wal_size: 4GB
     volume:
       size: 8Gi
-
 readmodel:
   psql:
     name: example-readmodel-postgresql
     database: readmodel
     username: postgres
-    hostname: 
+    hostname:
       write: example-readmodel-postgresql
       read: example-readmodel-postgresql-repl
       pool: example-readmodel-pgpool
-
 sourced:
   psql:
     name: example-sourced-db-postgresql
     database: sourced
     username: postgres
-    hostname: 
+    hostname:
       write: example-sourced-db-postgresql
       read: example-sourced-db-postgresql-repl
       pool: example-sourced-db-pgpool
-
 web3auth:
   psql:
     name: web3auth-db-postgresql
     database: web3auth
     username: postgres
-    hostname: 
+    hostname:
       write: web3auth-db-postgresql
       read: web3auth-db-postgresql-repl
       pool: web3auth-db-pgpool
