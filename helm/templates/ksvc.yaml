@@ -29,7 +29,7 @@ spec:
       #         topologyKey: failure-domain.beta.kubernetes.io/zone
       #       weight: 100
       containers:
-      - image: hasura/graphql-engine:v2.2.1
+      - image: hasura/graphql-engine:v2.14.0
         ports:
         - containerPort: {{ .Values.service.internalPort }}
           protocol: TCP

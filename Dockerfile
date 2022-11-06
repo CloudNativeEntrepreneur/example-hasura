@@ -1,5 +1,5 @@
 # This container runs migrations - the main hasura service is hasura/graphql-engine:v2.x.x
-FROM hasura/graphql-engine:v2.0.10.cli-migrations-v3
+FROM hasura/graphql-engine:v2.14.0.cli-migrations-v3
 
 # we are managing migrations with schemahero - so let's avoid copying it here unless we go back to using Hasura for migrations.
 # we still want the metadata and config though
