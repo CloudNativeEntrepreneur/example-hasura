@@ -38,7 +38,7 @@ readinessProbe:
 
 resources:
   limits:
-    cpu: '1'
+    cpu: "1"
     memory: 1Gi
   requests:
     cpu: 200m
@@ -50,7 +50,7 @@ hasura:
     name: example-hasura-metadata-postgresql
     database: metadata
     username: postgres
-    hostname: 
+    hostname:
       write: example-hasura-metadata-postgresql
       read: example-hasura-metadata-postgresql-repl
       pool: example-hasura-metadata-db-pgpool
@@ -106,7 +106,7 @@ readmodel:
     name: example-readmodel-postgresql
     database: readmodel
     username: postgres
-    hostname: 
+    hostname:
       write: example-readmodel-postgresql
       read: example-readmodel-postgresql-repl
       pool: example-readmodel-pgpool
@@ -116,7 +116,7 @@ sourced:
     name: example-sourced-db-postgresql
     database: sourced
     username: postgres
-    hostname: 
+    hostname:
       write: example-sourced-db-postgresql
       read: example-sourced-db-postgresql-repl
       pool: example-sourced-db-pgpool
@@ -126,7 +126,7 @@ web3auth:
     name: web3auth-db-postgresql
     database: web3auth
     username: postgres
-    hostname: 
+    hostname:
       write: web3auth-db-postgresql
       read: web3auth-db-postgresql-repl
       pool: web3auth-db-pgpool
