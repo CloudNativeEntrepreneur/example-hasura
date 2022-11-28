@@ -20,15 +20,11 @@ jobs:
     with:
       helm_path: promote/helm
 
-  node-quality:
-    uses: CloudNativeEntrepreneur/actions/.github/workflows/node-quality.yaml@main
-
   release:
     needs:
     - helm-quality
     - preview-helm-quality
     - promote-helm-quality
-    - node-quality
     uses: CloudNativeEntrepreneur/actions/.github/workflows/github-release.yaml@main
     secrets: inherit
     with:
